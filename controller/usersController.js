@@ -6,6 +6,47 @@ import { signAccessToken, signRefreshToken, verifyRefreshToken } from "./jwt_hel
 import VerifiedPhone from "../models/verifiedPhone.js"
 import bcrypt from "bcryptjs"
 import twilio from "twilio"
+import nodemailer from "nodemailer";
+
+
+export const contactUs = async (req, res, next) => {
+    const name = req.body.firstName + req.body.lastName;
+    const email = req.body.email;
+    const message = req.body.message;
+    const phone = req.body.phone;
+    const mail = {
+        from: name,
+        to: "krishgupta.8.kg@gmail.com",
+        subject: "Contact Form Submission - Portfolio",
+        html: `<p>Name: ${name}</p>
+           <p>Email: ${email}</p>
+           <p>Phone: ${phone}</p>
+           <p>Message: ${message}</p>`,
+    };
+    const contactEmail = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASSWORD,
+        },
+    });
+
+    contactEmail.verify((error) => {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("Ready to Send");
+        }
+    });
+    contactEmail.sendMail(mail, (error) => {
+        if (error) {
+            res.json(error);
+        } else {
+            res.json({ code: 200, status: "Message Sent" });
+        }
+    });
+}
+
 export const sendOtp = async (req, res, next) => {
     const number = req.body.number;
     const user = await User.findOne({
