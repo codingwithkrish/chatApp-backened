@@ -7,7 +7,7 @@ import { getReceiverSocketId, io } from "../socket/socket.js";
 export const sendMessages = async (req, res) => {
     console.log("Message Sent");
     try {
-        const { message } = req.body;
+        const { message, iv } = req.body;
         const { userId: receiverId } = req.params;
         const senderId = req.user._id;
         let conversation = await Conversation.findOne({
@@ -23,7 +23,8 @@ export const sendMessages = async (req, res) => {
         const newMessage = new Message({
             senderId: senderId,
             receiverId: receiverId,
-            message: message
+            message: message,
+            iv: iv
         })
         if (newMessage) {
             conversation.messages.push(newMessage._id);
