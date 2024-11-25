@@ -7,7 +7,7 @@ import { getReceiverSocketId, io } from "../socket/socket.js";
 export const sendMessages = async (req, res) => {
     console.log("Message Sent");
     try {
-        const { message, iv } = req.body;
+        const { message, iv, type } = req.body;
         const { userId: receiverId } = req.params;
         const senderId = req.user._id;
         let conversation = await Conversation.findOne({
@@ -24,7 +24,8 @@ export const sendMessages = async (req, res) => {
             senderId: senderId,
             receiverId: receiverId,
             message: message,
-            iv: iv
+            iv: iv,
+            type: type
         })
         if (newMessage) {
             conversation.messages.push(newMessage._id);
@@ -106,5 +107,24 @@ export const getMessages = async (req, res) => {
         console.log("Error in getMessages controller: ", error.message)
         res.status(500).json({ error: "Internal Server Error" })
 
+    }
+}
+
+export const acceptMoney = async (req, res) => {
+    try {
+        const messageId = req.params.messageId;
+        const senderId = req.user._id;
+        const message = await Message.findById(messageId);
+        if (!message) return res.status(404).json({ error: "Message not found" });
+        if (message.type !== "money") return res.status(400).json({ error: "Invalid message type" });
+        console.log(message.receiverId + " " + senderId.toString());
+        if (message.receiverId.toString() !== senderId.toString()) return res.status(401).json({ error: "Unauthorized" });
+        message.accepted = true;
+        message.moneyAcceptedAt = Date.now();
+        await message.save();
+        return res.status(200).json({ message: "Money accepted successfully" });
+    } catch (error) {
+        console.log("Error in acceptMoney controller: ", error.message)
+        res.status(500).json({ error: "Internal Server Error" });
     }
 }

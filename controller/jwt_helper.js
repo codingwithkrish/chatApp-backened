@@ -7,7 +7,7 @@ export const signAccessToken = (userId) => {
         const payload = { userId };
         const secrect = process.env.ACCESS_TOKEN_SECRET;
         const options = {
-            expiresIn: "25s",
+            expiresIn: "500s",
             issuer: "krishgupta.com",
             audience: userId,
         };

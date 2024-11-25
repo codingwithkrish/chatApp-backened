@@ -56,8 +56,9 @@ export const sendOtp = async (req, res, next) => {
     const OTP = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, digits: true, lowerCaseAlphabets: false });
     const otp = new Otp({
         number: number,
-        otp: OTP//need to change to OTP
+        otp: '123456'//need to change to OTP
     });
+    console.log(OTP);
     const salt = await bcrypt.genSalt(10);
     otp.otp = await bcrypt.hash(otp.otp, salt);
 
@@ -77,12 +78,15 @@ export const sendOtp = async (req, res, next) => {
         //         return res.status(200).send({ "message": "Otp Send", "isOtpSendt": true, "registeredUser": false })
         //     });
         //NEED TO uncomment above lines
-        sendSMS(otp.number, "Otp for Phone Verifaction is " + OTP + "  Valid For 5 min", (err, response) => {
-            if (err) return res.status(400).send({ "message": "Unable to Send Otp ", "isOtpSendt": false })
-            if (user) return res.status(200).send({ "message": "Otp Send", "isOtpSendt": true, "registeredUser": true })
+        // sendSMS(otp.number, "Otp for Phone Verifaction is " + OTP + "  Valid For 5 min", (err, response) => {
+        //     if (err) return res.status(400).send({ "message": "Unable to Send Otp ", "isOtpSendt": false })
+        //     if (user) return res.status(200).send({ "message": "Otp Send", "isOtpSendt": true, "registeredUser": true })
 
-            return res.status(200).send({ "message": "Otp Send", "isOtpSendt": true, "registeredUser": false })
-        });
+        //     return res.status(200).send({ "message": "Otp Send", "isOtpSendt": true, "registeredUser": false })
+        // });
+        if (user) return res.status(200).send({ "message": "Otp Send", "isOtpSendt": true, "registeredUser": true })
+
+        return res.status(200).send({ "message": "Otp Send", "isOtpSendt": true, "registeredUser": false })
 
     } catch (error) {
         console.log(error);
