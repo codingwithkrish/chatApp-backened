@@ -1,5 +1,5 @@
 import express from "express";
-import { sendOtp, verifyOtp, signup, refreshToken, logout, contactUs } from '../controller/usersController.js';
+import { sendOtp, verifyOtp, signup, refreshToken, logout, contactUs } from '../middelware/usersController.js';
 const router = express.Router();
 router.post('/sendotp', sendOtp);
 router.post('/verifyotp', verifyOtp);
