@@ -18,7 +18,7 @@ app.use(express.json());
 
 app.get("/", async (req, res, next) => {
     console.log(req.headers["authorization"]);
-    res.send("Hello from krish");
+    res.send("Hello from G22");
 });
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/notification", notificationRoute)
